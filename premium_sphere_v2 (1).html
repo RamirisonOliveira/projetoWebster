@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Particle Sphere v2</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:radial-gradient(ellipse at 50% 45%,#021828 0%,#010d18 50%,#000508 100%);display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;}
+  canvas{display:block;}
+  #ui{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:16px;align-items:center;background:rgba(0,15,30,0.75);padding:9px 22px;border-radius:24px;border:0.5px solid rgba(0,200,255,0.18);backdrop-filter:blur(10px);}
+  #ui span{color:rgba(0,210,255,0.45);font-size:10px;font-family:monospace;letter-spacing:.08em;text-transform:uppercase;}
+  input[type=range]{width:85px;accent-color:#00d4ff;}
+</style>
+</head>
+<body>
+<canvas id="sc"></canvas>
+<div id="ui">
+  <span>Amplitude</span><input type="range" id="amp" min="1" max="10" value="5">
+  <span>Velocidade</span><input type="range" id="spd" min="1" max="10" value="4">
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const canvas=document.getElementById('sc');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setClearColor(0x000810,1);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,0.1,100);
+camera.position.z=3.0;
+
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
+resize();
+window.addEventListener('resize',resize);
+
+// ── Simplex Noise 3D ──────────────────────────────────────────────
+function buildNoise(){
+  const F3=1/3,G3=1/6;
+  const g3=[[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+  const p=new Uint8Array(256);for(let i=0;i<256;i++)p[i]=i;
+  for(let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+  const pm=new Uint8Array(512),pm12=new Uint8Array(512);
+  for(let i=0;i<512;i++){pm[i]=p[i&255];pm12[i]=pm[i]%12;}
+  const dot=(g,x,y,z)=>g[0]*x+g[1]*y+g[2]*z;
+  return function(x,y,z){
+    const s=(x+y+z)*F3;
+    const i=Math.floor(x+s),j=Math.floor(y+s),k=Math.floor(z+s);
+    const t0=(i+j+k)*G3;
+    const x0=x-(i-t0),y0=y-(j-t0),z0=z-(k-t0);
+    let i1,j1,k1,i2,j2,k2;
+    if(x0>=y0){if(y0>=z0){i1=1;j1=0;k1=0;i2=1;j2=1;k2=0}else if(x0>=z0){i1=1;j1=0;k1=0;i2=1;j2=0;k2=1}else{i1=0;j1=0;k1=1;i2=1;j2=0;k2=1}}
+    else{if(y0<z0){i1=0;j1=0;k1=1;i2=0;j2=1;k2=1}else if(x0<z0){i1=0;j1=1;k1=0;i2=0;j2=1;k2=1}else{i1=0;j1=1;k1=0;i2=1;j2=1;k2=0}}
+    const x1=x0-i1+G3,y1=y0-j1+G3,z1=z0-k1+G3;
+    const x2=x0-i2+2*G3,y2=y0-j2+2*G3,z2=z0-k2+2*G3;
+    const x3=x0-1+3*G3,y3=y0-1+3*G3,z3=z0-1+3*G3;
+    const ii=i&255,jj=j&255,kk=k&255;
+    let n0=0,n1=0,n2=0,n3=0,tt;
+    tt=0.6-x0*x0-y0*y0-z0*z0;if(tt>0){tt*=tt;n0=tt*tt*dot(g3[pm12[ii+pm[jj+pm[kk]]]],x0,y0,z0);}
+    tt=0.6-x1*x1-y1*y1-z1*z1;if(tt>0){tt*=tt;n1=tt*tt*dot(g3[pm12[ii+i1+pm[jj+j1+pm[kk+k1]]]],x1,y1,z1);}
+    tt=0.6-x2*x2-y2*y2-z2*z2;if(tt>0){tt*=tt;n2=tt*tt*dot(g3[pm12[ii+i2+pm[jj+j2+pm[kk+k2]]]],x2,y2,z2);}
+    tt=0.6-x3*x3-y3*y3-z3*z3;if(tt>0){tt*=tt;n3=tt*tt*dot(g3[pm12[ii+1+pm[jj+1+pm[kk+1]]]],x3,y3,z3);}
+    return 32*(n0+n1+n2+n3);
+  };
+}
+const noise=buildNoise();
+
+function fibSphere(n){
+  const out=new Float32Array(n*3);
+  const phi=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<n;i++){
+    const y=1-(i/(n-1))*2;
+    const r=Math.sqrt(Math.max(0,1-y*y));
+    const th=phi*i;
+    out[i*3]=Math.cos(th)*r;out[i*3+1]=y;out[i*3+2]=Math.sin(th)*r;
+  }
+  return out;
+}
+
+const N=14000;
+const base=fibSphere(N);
+const smoothDisp=new Float32Array(N);
+
+const geo=new THREE.BufferGeometry();
+geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3));
+geo.setAttribute('aColor',  new THREE.BufferAttribute(new Float32Array(N*3),3));
+geo.setAttribute('aSize',   new THREE.BufferAttribute(new Float32Array(N),1));
+
+const mat=new THREE.ShaderMaterial({
+  vertexShader:`
+    attribute vec3 aColor;attribute float aSize;varying vec3 vCol;
+    void main(){vCol=aColor;vec4 mv=modelViewMatrix*vec4(position,1.0);gl_PointSize=aSize*(340.0/-mv.z);gl_Position=projectionMatrix*mv;}
+  `,
+  fragmentShader:`
+    varying vec3 vCol;
+    void main(){
+      vec2 uv=gl_PointCoord*2.0-1.0;float d=dot(uv,uv);
+      if(d>1.0)discard;
+      float core=1.0-smoothstep(0.0,0.28,d);
+      float halo=exp(-d*1.6)*0.72;float rim=exp(-d*3.8)*0.48;
+      float alpha=min(core*0.98+halo+rim*0.6,1.0);
+      gl_FragColor=vec4(mix(vCol,vec3(0.82,1.0,1.0),core*0.42),alpha*0.93);
+    }
+  `,
+  transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,vertexColors:false
+});
+
+const mesh=new THREE.Points(geo,mat);
+scene.add(mesh);
+
+function makeGlowTex(ia,oa){
+  const sz=256,cv=document.createElement('canvas');cv.width=cv.height=sz;
+  const ctx=cv.getContext('2d');
+  const g=ctx.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,sz/2);
+  g.addColorStop(0.00,`rgba(0,230,255,${ia})`);g.addColorStop(0.20,`rgba(0,210,255,${ia*0.65})`);
+  g.addColorStop(0.50,`rgba(0,170,220,${ia*0.22})`);g.addColorStop(0.80,`rgba(0,120,180,${oa})`);g.addColorStop(1.00,'rgba(0,0,0,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,sz,sz);return new THREE.CanvasTexture(cv);
+}
+const glowMat=new THREE.SpriteMaterial({map:makeGlowTex(0.28,0.04),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false});
+const glowSprite=new THREE.Sprite(glowMat);glowSprite.scale.set(4.2,4.2,1);scene.add(glowSprite);
+const innerMat=new THREE.SpriteMaterial({map:makeGlowTex(0.45,0.08),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0.8});
+const innerSprite=new THREE.Sprite(innerMat);innerSprite.scale.set(2.4,2.4,1);scene.add(innerSprite);
+
+let rotY=0,rotX=0.15,drag=false,lx=0,ly=0,vx=0,vy=0;
+canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;vx=vy=0;});
+window.addEventListener('mouseup',()=>drag=false);
+window.addEventListener('mousemove',e=>{if(!drag)return;vx=(e.clientX-lx)*0.005;vy=(e.clientY-ly)*0.005;rotY+=vx;rotX+=vy;lx=e.clientX;ly=e.clientY;});
+canvas.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
+canvas.addEventListener('touchend',()=>drag=false);
+canvas.addEventListener('touchmove',e=>{if(!drag)return;vx=(e.touches[0].clientX-lx)*0.005;vy=(e.touches[0].clientY-ly)*0.005;rotY+=vx;rotX+=vy;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:false});
+
+let userAmp=5,userSpd=4;
+document.getElementById('amp').addEventListener('input',e=>userAmp=+e.target.value);
+document.getElementById('spd').addEventListener('input',e=>userSpd=+e.target.value);
+
+// ── State machine ─────────────────────────────────────────────────
+const PHASE_PERFECT=0,PHASE_TO_DEFORM=1,PHASE_DEFORM=2,PHASE_TO_PERFECT=3;
+let phase=PHASE_PERFECT,phaseTimer=0,deformFactor=0.0,currentRotSpeed=0.0;
+const DUR_PERFECT=3.5,DUR_TRANSITION=1.4,DUR_DEFORM=5.0,TARGET_ROT=0.038;
+function easeInOutCubic(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function easeInOutSine(t){return -(Math.cos(Math.PI*t)-1)/2;}
+
+let T=0,lastTime=performance.now();
+
+function animate(){
+  requestAnimationFrame(animate);
+  const now=performance.now();
+  const dt=Math.min((now-lastTime)/1000,0.05);
+  lastTime=now;
+
+  const AMP=0.035+(userAmp/10)*0.055;
+  const SPD=0.12+(userSpd/10)*0.26;
+  const FREQ=1.3,DAMP=0.88;
+  phaseTimer+=dt;
+
+  switch(phase){
+    case PHASE_PERFECT:
+      deformFactor=0.0;currentRotSpeed*=0.92;
+      if(phaseTimer>=DUR_PERFECT){phase=PHASE_TO_DEFORM;phaseTimer=0;}break;
+    case PHASE_TO_DEFORM:{
+      const p=Math.min(phaseTimer/DUR_TRANSITION,1.0);
+      deformFactor=easeInOutCubic(p);
+      currentRotSpeed+=(TARGET_ROT-currentRotSpeed)*0.06;
+      if(p>=1.0){phase=PHASE_DEFORM;phaseTimer=0;}break;}
+    case PHASE_DEFORM:
+      deformFactor=1.0;currentRotSpeed+=(TARGET_ROT-currentRotSpeed)*0.10;
+      if(phaseTimer>=DUR_DEFORM){phase=PHASE_TO_PERFECT;phaseTimer=0;}break;
+    case PHASE_TO_PERFECT:{
+      const p=Math.min(phaseTimer/DUR_TRANSITION,1.0);
+      deformFactor=1.0-easeInOutCubic(p);
+      currentRotSpeed*=(1.0-easeInOutSine(p)*0.06);
+      if(p>=1.0){phase=PHASE_PERFECT;phaseTimer=0;currentRotSpeed=0;}break;}
+  }
+
+  T+=SPD*0.016*(0.5+deformFactor*2.5);
+  const breath=1.0+0.012*Math.sin(T*0.55)*deformFactor+0.006*Math.sin(T*1.28)*deformFactor;
+
+  const pos=geo.attributes.position.array;
+  const col=geo.attributes.aColor.array;
+  const sz=geo.attributes.aSize.array;
+
+  for(let i=0;i<N;i++){
+    const bx=base[i*3],by=base[i*3+1],bz=base[i*3+2];
+    const n1=noise(bx*FREQ+T*0.72,by*FREQ+T*0.58,bz*FREQ+T*0.85)*AMP;
+    const n2=noise(bx*FREQ*1.9-T*0.95+4.7,by*FREQ*1.9+T*0.82+4.7,bz*FREQ*1.9-T*0.76+4.7)*AMP*0.38;
+    const n3=noise(bx*FREQ*4.2+T*1.4+9.1,by*FREQ*4.2-T*1.2+9.1,bz*FREQ*4.2+T*1.1+9.1)*AMP*0.12;
+    const raw=(n1+n2+n3)*deformFactor;
+    smoothDisp[i]=smoothDisp[i]*DAMP+raw*(1-DAMP);
+    const d=smoothDisp[i];
+    const r=(1.0+d)*breath;
+    pos[i*3]=bx*r;pos[i*3+1]=by*r;pos[i*3+2]=bz*r;
+    const t01=deformFactor<0.01?0.5:Math.max(0,Math.min(1,(d/(AMP*1.2)+1)*0.5));
+    const bright=0.48+t01*0.72;
+    col[i*3]=bright*0.04;col[i*3+1]=bright*0.85;col[i*3+2]=bright*1.00;
+    sz[i]=(0.010+t01*0.0088)*1.5625; // +25%
+  }
+
+  geo.attributes.position.needsUpdate=true;
+  geo.attributes.aColor.needsUpdate=true;
+  geo.attributes.aSize.needsUpdate=true;
+
+  const gp=0.85+0.15*deformFactor+0.10*Math.sin(T*0.55)*deformFactor;
+  glowSprite.scale.set(4.2*gp,4.2*gp,1);innerSprite.scale.set(2.4*gp,2.4*gp,1);
+  glowMat.opacity=0.75+0.20*deformFactor+0.05*Math.sin(T*0.55);
+  innerMat.opacity=0.55+0.25*deformFactor+0.10*Math.sin(T*1.1);
+
+  if(!drag){vx*=0.93;vy*=0.93;const dynRot=currentRotSpeed*(0.5+deformFactor*1.5)*(0.5+userSpd/10);rotY+=vx+dynRot;rotX+=vy;}
+  rotX=Math.max(-1.3,Math.min(1.3,rotX));
+  mesh.rotation.y=rotY;mesh.rotation.x=rotX;
+  renderer.render(scene,camera);
+}
+animate();
+})();
+</script>
+</body>
+</html>

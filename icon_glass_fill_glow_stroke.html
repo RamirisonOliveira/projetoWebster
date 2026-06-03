@@ -1,0 +1,242 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .icon-section {
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(133,210,230,0.4);
+    text-transform: uppercase;
+    font-family: var(--font-sans);
+  }
+  .icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+  }
+  .icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .icon-item svg {
+    transition: transform 0.25s ease, filter 0.25s ease;
+    overflow: visible;
+  }
+  .icon-item:hover svg {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(0,220,255,0.5));
+  }
+  .icon-label {
+    font-size: 11px;
+    color: rgba(130,210,225,0.35);
+    font-family: var(--font-sans);
+    letter-spacing: 1px;
+    text-align: center;
+    transition: color 0.2s;
+  }
+  .icon-item:hover .icon-label {
+    color: rgba(130,210,225,0.7);
+  }
+</style>
+
+<div class="icon-section">
+  <span class="section-label">Funcionalidades</span>
+  <div class="icon-grid">
+
+    <!-- CPU -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g1" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="glass-cpu" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.22"/>
+            <stop offset="55%" stop-color="#00c8e0" stop-opacity="0.07"/>
+            <stop offset="100%" stop-color="#001820" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <!-- fill glass inside rect -->
+        <rect x="7" y="7" width="10" height="10" rx="1.5" fill="url(#glass-cpu)"/>
+        <!-- stroke com glow -->
+        <rect x="7" y="7" width="10" height="10" rx="1.5" stroke="#00f0ff" stroke-width="1.3" filter="url(#g1)" opacity="0.9"/>
+        <rect x="9.5" y="9.5" width="5" height="5" rx="0.5" stroke="#00e0f0" stroke-width="0.9" opacity="0.35"/>
+        <!-- pins - brilhantes de um lado, apagados do outro -->
+        <line x1="9" y1="7" x2="9" y2="4.5" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" filter="url(#g1)" opacity="0.9"/>
+        <line x1="12" y1="7" x2="12" y2="4.5" stroke="#00c0d0" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+        <line x1="15" y1="7" x2="15" y2="4.5" stroke="#004050" stroke-width="1.3" stroke-linecap="round" opacity="0.15"/>
+        <line x1="15" y1="17" x2="15" y2="19.5" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" filter="url(#g1)" opacity="0.9"/>
+        <line x1="12" y1="17" x2="12" y2="19.5" stroke="#00c0d0" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+        <line x1="9" y1="17" x2="9" y2="19.5" stroke="#004050" stroke-width="1.3" stroke-linecap="round" opacity="0.15"/>
+        <line x1="7" y1="9" x2="4.5" y2="9" stroke="#004050" stroke-width="1.3" stroke-linecap="round" opacity="0.15"/>
+        <line x1="7" y1="12" x2="4.5" y2="12" stroke="#00c0d0" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+        <line x1="7" y1="15" x2="4.5" y2="15" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" filter="url(#g1)" opacity="0.9"/>
+        <line x1="17" y1="15" x2="19.5" y2="15" stroke="#004050" stroke-width="1.3" stroke-linecap="round" opacity="0.15"/>
+        <line x1="17" y1="12" x2="19.5" y2="12" stroke="#00c0d0" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+        <line x1="17" y1="9" x2="19.5" y2="9" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" filter="url(#g1)" opacity="0.9"/>
+      </svg>
+      <span class="icon-label">Processamento</span>
+    </div>
+
+    <!-- Shield -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g2" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="glass-sh" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.22"/>
+            <stop offset="60%" stop-color="#00c0d8" stop-opacity="0.06"/>
+            <stop offset="100%" stop-color="#000a10" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <path d="M12 3L4 6.5V12c0 4 3.5 7.4 8 8.8C16.5 19.4 20 16 20 12V6.5L12 3Z" fill="url(#glass-sh)"/>
+        <path d="M12 3L4 6.5V12c0 4 3.5 7.4 8 8.8C16.5 19.4 20 16 20 12V6.5L12 3Z"
+          stroke="#00f0ff" stroke-width="1.3" stroke-linejoin="round" filter="url(#g2)" opacity="0.85"/>
+        <path d="M9 12l2 2 4-4" stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" filter="url(#g2)" opacity="0.9"/>
+      </svg>
+      <span class="icon-label">Segurança</span>
+    </div>
+
+    <!-- Eye -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g3" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="glass-eye" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.20"/>
+            <stop offset="50%" stop-color="#00b8cc" stop-opacity="0.07"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0.0"/>
+          </linearGradient>
+          <radialGradient id="iris" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#001820" stop-opacity="0.0"/>
+          </radialGradient>
+        </defs>
+        <!-- fill olho -->
+        <path d="M2 12C4.5 7 7.8 5 12 5C16.2 5 19.5 7 22 12C19.5 17 16.2 19 12 19C7.8 19 4.5 17 2 12Z" fill="url(#glass-eye)"/>
+        <!-- iris fill -->
+        <circle cx="12" cy="12" r="3.5" fill="url(#iris)"/>
+        <!-- stroke com glow -->
+        <path d="M2 12C4.5 7 7.8 5 12 5C16.2 5 19.5 7 22 12C19.5 17 16.2 19 12 19C7.8 19 4.5 17 2 12Z"
+          stroke="#00f0ff" stroke-width="1.3" filter="url(#g3)" opacity="0.85"/>
+        <circle cx="12" cy="12" r="3.5" stroke="#00f0ff" stroke-width="1.3" filter="url(#g3)" opacity="0.8"/>
+        <!-- pupila -->
+        <circle cx="12" cy="12" r="1.2" fill="#00f0ff" opacity="0.75" filter="url(#g3)"/>
+        <!-- reflexo interno -->
+        <ellipse cx="10.5" cy="10.5" rx="1" ry="0.5" fill="white" opacity="0.18" transform="rotate(-30 10.5 10.5)"/>
+      </svg>
+      <span class="icon-label">Visão</span>
+    </div>
+
+    <!-- Chart line -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g4" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="glass-area" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#001820" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <!-- area fill abaixo da linha -->
+        <path d="M3 18 L8 12 L12 15 L16 8 L21 5 L21 20 L3 20Z" fill="url(#glass-area)"/>
+        <!-- linha com glow -->
+        <polyline points="3,18 8,12 12,15 16,8 21,5"
+          stroke="#00f0ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"
+          filter="url(#g4)" opacity="0.9"/>
+        <!-- pontos brilhantes -->
+        <circle cx="21" cy="5" r="1.8" fill="#00f0ff" opacity="0.85" filter="url(#g4)"/>
+        <circle cx="16" cy="8" r="1.3" fill="#00d0e8" opacity="0.55"/>
+        <circle cx="12" cy="15" r="1" fill="#006878" opacity="0.3"/>
+        <!-- eixos apagados -->
+        <line x1="3" y1="5" x2="3" y2="20" stroke="#00c0d0" stroke-width="1" opacity="0.15" stroke-linecap="round"/>
+        <line x1="3" y1="20" x2="21" y2="20" stroke="#00c0d0" stroke-width="1" opacity="0.15" stroke-linecap="round"/>
+      </svg>
+      <span class="icon-label">Analytics</span>
+    </div>
+
+    <!-- Cloud -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g5" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="glass-cloud" x1="0.3" y1="0" x2="0.7" y2="1">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.20"/>
+            <stop offset="60%" stop-color="#00a8c0" stop-opacity="0.07"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <path d="M7 17.5C4.5 17.5 2.5 15.5 2.5 13C2.5 10.8 4.2 9 6.3 8.7C6.8 6.5 8.8 5 11.2 5C13.4 5 15.3 6.4 16 8.4C16.2 8.3 16.4 8.3 16.7 8.3C18.8 8.3 20.5 10 20.5 12.1C20.5 14.2 18.8 16 16.7 16" fill="url(#glass-cloud)"/>
+        <path d="M7 17.5C4.5 17.5 2.5 15.5 2.5 13C2.5 10.8 4.2 9 6.3 8.7C6.8 6.5 8.8 5 11.2 5C13.4 5 15.3 6.4 16 8.4C16.2 8.3 16.4 8.3 16.7 8.3C18.8 8.3 20.5 10 20.5 12.1C20.5 14.2 18.8 16 16.7 16"
+          stroke="#00f0ff" stroke-width="1.3" stroke-linecap="round" filter="url(#g5)" opacity="0.85"/>
+        <line x1="12" y1="13" x2="12" y2="20" stroke="#00d0e8" stroke-width="1.3" stroke-linecap="round" opacity="0.45"/>
+        <path d="M9.5 17.5l2.5 2.5 2.5-2.5" stroke="#00d0e8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+      </svg>
+      <span class="icon-label">Nuvem</span>
+    </div>
+
+    <!-- Network -->
+    <div class="icon-item">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="g6" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="glass-node" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#001820" stop-opacity="0.0"/>
+          </radialGradient>
+        </defs>
+        <!-- nós com fill glass -->
+        <circle cx="12" cy="12" r="2.5" fill="url(#glass-node)"/>
+        <circle cx="12" cy="4.5" r="1.8" fill="url(#glass-node)"/>
+        <circle cx="19" cy="8.5" r="1.8" fill="url(#glass-node)"/>
+        <circle cx="5" cy="8.5" r="1.8" fill="url(#glass-node)"/>
+        <circle cx="19" cy="15.5" r="1.8" fill="url(#glass-node)" opacity="0.4"/>
+        <circle cx="5" cy="15.5" r="1.8" fill="url(#glass-node)" opacity="0.4"/>
+        <circle cx="12" cy="19.5" r="1.8" fill="url(#glass-node)" opacity="0.3"/>
+        <!-- strokes -->
+        <circle cx="12" cy="12" r="2.5" stroke="#00f0ff" stroke-width="1.3" filter="url(#g6)" opacity="0.9"/>
+        <circle cx="12" cy="4.5" r="1.8" stroke="#00f0ff" stroke-width="1.2" filter="url(#g6)" opacity="0.8"/>
+        <circle cx="19" cy="8.5" r="1.8" stroke="#00e0f0" stroke-width="1.2" filter="url(#g6)" opacity="0.65"/>
+        <circle cx="5" cy="8.5" r="1.8" stroke="#00e0f0" stroke-width="1.2" filter="url(#g6)" opacity="0.65"/>
+        <circle cx="19" cy="15.5" r="1.8" stroke="#006070" stroke-width="1.2" opacity="0.3"/>
+        <circle cx="5" cy="15.5" r="1.8" stroke="#006070" stroke-width="1.2" opacity="0.3"/>
+        <circle cx="12" cy="19.5" r="1.8" stroke="#004050" stroke-width="1.2" opacity="0.2"/>
+        <!-- linhas conectoras -->
+        <line x1="12" y1="9.5" x2="12" y2="6.3" stroke="#00f0ff" stroke-width="1" filter="url(#g6)" opacity="0.7"/>
+        <line x1="14" y1="10.5" x2="17.3" y2="9.2" stroke="#00d0e8" stroke-width="1" filter="url(#g6)" opacity="0.6"/>
+        <line x1="10" y1="10.5" x2="6.7" y2="9.2" stroke="#00d0e8" stroke-width="1" filter="url(#g6)" opacity="0.6"/>
+        <line x1="14" y1="13.5" x2="17.3" y2="14.8" stroke="#005060" stroke-width="1" opacity="0.2"/>
+        <line x1="10" y1="13.5" x2="6.7" y2="14.8" stroke="#005060" stroke-width="1" opacity="0.2"/>
+        <line x1="12" y1="14.5" x2="12" y2="17.7" stroke="#003040" stroke-width="1" opacity="0.15"/>
+      </svg>
+      <span class="icon-label">Rede</span>
+    </div>
+
+  </div>
+</div>
